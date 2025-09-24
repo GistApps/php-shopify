@@ -30,13 +30,6 @@ class GiftCard extends ShopifyResource
     public $searchEnabled = true;
 
     /**
-     * @inheritDoc
-     */
-    protected $childResource = array(
-        'GiftCardAdjustment' => 'Adjustment'
-    );
-
-    /**
      * Disable a gift card.
      * Disabling a gift card is permanent and cannot be undone.
      *
@@ -53,5 +46,10 @@ class GiftCard extends ShopifyResource
         return $this->post($dataArray, $url);
     }
 
-
+    /**
+     * @inheritDoc
+     */
+    protected $childResource = array(
+        'GiftCardAdjustment' => 'Adjustment'
+    );
 }
