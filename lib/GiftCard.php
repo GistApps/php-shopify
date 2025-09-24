@@ -52,4 +52,6 @@ class GiftCard extends ShopifyResource
 
         return $this->post($dataArray, $url);
     }
+
+
 }

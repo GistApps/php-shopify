@@ -44,16 +44,17 @@ class HttpRequestGraphQL extends HttpRequestJson
             throw new SdkException("The GraphQL Admin API requires an access token for making authenticated requests!");
         }
 
+        self::$httpHeaders = $httpHeaders;
+        self::$httpHeaders['Content-type'] = 'application/json';
+
         if (is_array($variables)) {
             self::$postDataGraphQL = json_encode(['query' => $data, 'variables' => $variables]);
-            $httpHeaders['Content-type'] = 'application/json';
         } else {
-            $httpHeaders['Content-type'] = 'application/graphql';
+            self::$postDataGraphQL = json_encode(['query' => $data]);
         }
 
-        $httpHeaders['X-Shopify-Access-Token'] = $httpHeaders['X-Shopify-Access-Token'];
+        self::$httpHeaders['Content-Length'] = strlen(self::$postDataGraphQL);
 
-        self::$httpHeaders = $httpHeaders;
     }
 
     /**
