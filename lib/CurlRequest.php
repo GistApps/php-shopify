@@ -50,6 +50,13 @@ class CurlRequest
     protected static $config = array();
 
     /**
+     * Logger instance
+     *
+     * @var mixed
+     */
+    protected static mixed $logger = null;
+
+    /**
      * Initialize the curl resource
      *
      * @param string $url
@@ -84,6 +91,11 @@ class CurlRequest
 
         return $ch;
 
+    }
+
+    public static function setLogger($logger)
+    {
+        self::$logger = $logger;
     }
 
     /**
@@ -200,10 +212,30 @@ class CurlRequest
             $retryAfter = $response->getHeader('Retry-After');
 
             if ($retryAfter === null) {
+                if (isset(static::$logger) && method_exists(static::$logger, 'warning')) {
+                    static::$logger->warning("Retry-After header not found in 429 response", array(
+                        'http_code' => self::$lastHttpCode,
+                        'url' => curl_getinfo($ch, CURLINFO_EFFECTIVE_URL),
+                        'response_headers' => $response->getHeaders(),
+                        'response_body' => $response->getBody(),
+                    ));
+                }
                 break;
             }
 
             self::$totalRetrySleepTime += (float)$retryAfter;
+
+            if (isset(static::$logger) && method_exists(static::$logger, 'warning')) {
+                static::$logger->warning("Retrying after $retryAfter seconds due to 429 response", array(
+                    'retry_after' => $retryAfter,
+                    'total_retry_sleep_time' => self::$totalRetrySleepTime,
+                    'http_code' => self::$lastHttpCode,
+                    'url' => curl_getinfo($ch, CURLINFO_EFFECTIVE_URL),
+                    'response_headers' => $response->getHeaders(),
+                    'response_body' => $response->getBody(),
+                ));
+            }
+            
             sleep((float)$retryAfter);
         }
 
