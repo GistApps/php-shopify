@@ -384,27 +384,7 @@ class ShopifySDK
             CurlRequest::config($config['Curl']);
         }
 
-        if (!isset($config['logger'])) {
-
-            $logger = new \StdClass();
-            
-            $loggerFn = function($message, $array) {
-                // Default logger does nothing
-                error_log($message);
-                error_log(print_r($array, true));
-            };
-
-            $logger->warning = $loggerFn;
-
-            $logger->info = $loggerFn;
-
-            $logger->critical = $loggerFn;
-
-            $logger->error = $loggerFn;
-
-            CurlRequest::setLogger($logger);
-
-        }
+        CurlRequest::setLogger(isset($config['logger']) ? $config['logger'] : null);
 
         return new ShopifySDK;
     }

@@ -54,7 +54,7 @@ class CurlRequest
      *
      * @var mixed
      */
-    protected static mixed $logger = null;
+    protected static $logger = null;
 
     /**
      * Initialize the curl resource
